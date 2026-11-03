@@ -10,7 +10,7 @@ import { ChannelEditorDrawer } from "@/components/layout/channel-editor-drawer";
 import { ConfigLocalProxy } from "@/components/layout/config-local-proxy";
 import { ConfigPromptSources } from "@/components/layout/config-prompt-sources";
 import { ConfigLocalStorage } from "@/components/layout/config-local-storage";
-import type { AppLocale } from "@/i18n";
+import { appLanguages, changeAppLocale, type AppLocale } from "@/i18n";
 import { exportAppConfig, importAppConfig } from "@/services/config-file";
 import { syncAppDataToWebdav, type AppSyncDomainKey, type AppSyncProgressEvent } from "@/services/app-sync";
 import { testWebdavConnection, WEBDAV_MANIFEST_FILE_NAME } from "@/services/webdav-sync";
@@ -225,6 +225,9 @@ export function AppConfigPanel({ showDoneButton = false, initialTab = "channels"
                         label: t("config.tabs.preferences"),
                         children: (
                             <Form layout="vertical" requiredMark={false}>
+                                <Form.Item label={t("topNav.switchLanguage", { language: appLanguages.find(({ value }) => value === locale)?.label })}>
+                                    <Select value={locale} options={[...appLanguages]} onChange={(value) => void changeAppLocale(value)} className="w-full md:max-w-xs" />
+                                </Form.Item>
                                 <div className="mb-2 text-sm font-semibold">{t("config.preferences.defaultModels")}</div>
                                 <div className="mb-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                                     {modelGroups.map((group) => (
