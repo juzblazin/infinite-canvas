@@ -1,3 +1,45 @@
+## SaaS / Cloudflare + Neon
+
+The SaaS shell adds a public landing page and email/password authentication. Accounts and workspace membership use Postgres; canvas projects, assets and API keys still live in your browser. Generation requests go directly to your configured AI providers. Pricing is a preview: payments, credit enforcement, cloud project sync and team collaboration are not implemented.
+
+Use Node.js 22+ and a local Postgres database for development (or a Neon connection string):
+
+```sh
+cd server
+npm install
+cp .dev.vars.example .dev.vars
+# Set DATABASE_URL, a random BETTER_AUTH_SECRET (32+ characters),
+# and BETTER_AUTH_URL=http://localhost:3000 in .dev.vars.
+npm run migrate
+npx wrangler dev --port 8787
+```
+
+In another terminal:
+
+```sh
+cd web
+npm install
+npm run dev
+# http://localhost:3000; /api is proxied to localhost:8787
+```
+
+For Cloudflare deployment, provision Neon Postgres, then run migrations against its `DATABASE_URL` (`DATABASE_URL='...' npm run migrate` in `server/`). Build the frontend and configure Worker secrets:
+
+```sh
+cd web
+npm run build
+cd ../server
+npx wrangler secret put DATABASE_URL
+npx wrangler secret put BETTER_AUTH_SECRET
+npx wrangler secret put BETTER_AUTH_URL
+# BETTER_AUTH_URL is the public HTTPS origin serving both app and API.
+# Optional: set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET with wrangler secret put.
+# Register <BETTER_AUTH_URL>/api/auth/callback/google in Google OAuth settings.
+npx wrangler deploy
+```
+
+The Worker serves `web/dist` with SPA fallback. `/api/health` reports liveness and `/api/config` reports whether Google login is enabled. Google is hidden unless both credentials are configured. This setup has a local verification path; production deployment and Google OAuth require your own credentials and acceptance testing. Existing static-only deployment instructions below do not include the authentication Worker.
+
 <p align="center">
   <img src="web/public/logo.svg" width="96" alt="infinite-canvas logo">
 </p>
