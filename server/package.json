@@ -1,0 +1,22 @@
+{
+  "name": "infinite-canvas-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "deploy": "wrangler deploy",
+    "migrate": "node --env-file-if-exists=.dev.vars scripts/migrate.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "better-auth": "^1.6.0",
+    "hono": "^4.12.0",
+    "pg": "^8.16.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261118.1",
+    "@types/pg": "^8.16.0",
+    "typescript": "^5.9.0",
+    "wrangler": "^4.65.0"
+  }
+}
