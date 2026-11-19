@@ -1,6 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import { authReturnPath, loginRedirect, safeNext } from "../src/services/api/auth";
+import { authReturnPath, hasSessionUser, loginRedirect, safeNext } from "../src/services/api/auth";
 import { readAgentUrlBootstrap } from "../src/lib/agent/agent-url-bootstrap";
+
+describe("session validation", () => {
+    test("accepts a real user", () => {
+        expect(hasSessionUser({ user: { id: "user-1", email: "user@example.com", name: "User" } })).toBe(true);
+    });
+    test("rejects empty sessions, HTML fallbacks and malformed user objects", () => {
+        for (const data of [null, undefined, "<!doctype html><html></html>", {}, { user: null }, { user: {} }, { user: { id: "user-1" } }, { user: { id: "", email: "user@example.com", name: "User" } }]) {
+            expect(hasSessionUser(data)).toBe(false);
+        }
+    });
+});
 
 describe("agent launch authentication", () => {
     test("keeps credentials in the fragment across login and signup", () => {

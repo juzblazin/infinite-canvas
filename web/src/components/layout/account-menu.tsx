@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { authClient } from "@/services/api/auth";
+import { authClient, hasSessionUser } from "@/services/api/auth";
 
 export function AccountMenu() {
     const { data } = authClient.useSession();
@@ -9,7 +9,7 @@ export function AccountMenu() {
     const navigate = useNavigate();
     const [error, setError] = useState(false);
     const [busy, setBusy] = useState(false);
-    if (!data) return null;
+    if (!hasSessionUser(data)) return null;
     async function logout() {
         setBusy(true);
         setError(false);

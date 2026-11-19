@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowDown, ArrowRight, Check, Expand, Layers, Sparkles, Users, WandSparkles } from "lucide-react";
-import { authClient } from "@/services/api/auth";
+import { authClient, hasSessionUser } from "@/services/api/auth";
 import "./landing.css";
 
 const models = ["GPT Image", "Gemini / Nano Banana", "Flux", "Kling", "Veo", "Seedance"];
@@ -18,14 +18,15 @@ const plans = [
 export default function LandingPage() {
     const { t } = useTranslation();
     const { data: session } = authClient.useSession();
+    const signedIn = hasSessionUser(session);
     const [annual, setAnnual] = useState(false);
     const reducedMotion = useReducedMotion();
     const features = t("saas.features", { returnObjects: true }) as { title: string; text: string; detail: string }[];
     const questions = t("saas.questions", { returnObjects: true }) as { question: string; answer: string }[];
     const icons = [Expand, Layers, WandSparkles, Users];
     const cta = (
-        <Link className="landing-cta" to={session ? "/app" : "/signup"}>
-            {t(session ? "saas.openApp" : "saas.cta")}
+        <Link className="landing-cta" to={signedIn ? "/app" : "/signup"}>
+            {t(signedIn ? "saas.openApp" : "saas.cta")}
             <ArrowRight size={17} />
         </Link>
     );
@@ -45,13 +46,13 @@ export default function LandingPage() {
                     ))}
                 </nav>
                 <div className="flex items-center gap-5 text-sm">
-                    {!session && (
+                    {!signedIn && (
                         <Link to="/login" className="hidden text-white/70 hover:text-white sm:block">
                             {t("saas.login")}
                         </Link>
                     )}
-                    <Link to={session ? "/app" : "/signup"} className="rounded-full !bg-[#eff0e9] px-5 py-2.5 font-medium !text-[#131510]">
-                        {t(session ? "saas.openApp" : "saas.signup")}
+                    <Link to={signedIn ? "/app" : "/signup"} className="rounded-full !bg-[#eff0e9] px-5 py-2.5 font-medium !text-[#131510]">
+                        {t(signedIn ? "saas.openApp" : "saas.signup")}
                     </Link>
                 </div>
             </header>

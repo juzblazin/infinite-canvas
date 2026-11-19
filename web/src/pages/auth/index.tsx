@@ -2,7 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { AUTH_FRAGMENT_KEY, authClient, authReturnPath, getAuthConfig, safeNext } from "@/services/api/auth";
+import { AUTH_FRAGMENT_KEY, authClient, authReturnPath, getAuthConfig, hasSessionUser, safeNext } from "@/services/api/auth";
 
 export default function AuthPage() {
     const location = useLocation();
@@ -22,7 +22,7 @@ export default function AuthPage() {
             .catch(() => setGoogle(false));
     }, []);
     if (session.isPending) return <div className="grid min-h-dvh place-content-center">{t("saas.loading")}</div>;
-    if (session.data) return <Navigate to={next} replace />;
+    if (hasSessionUser(session.data)) return <Navigate to={next} replace />;
 
     async function submit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
