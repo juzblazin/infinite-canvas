@@ -2,12 +2,14 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { authClient, getAuthConfig, safeNext } from "@/services/api/auth";
+import { AUTH_FRAGMENT_KEY, authClient, authReturnPath, getAuthConfig, safeNext } from "@/services/api/auth";
 
 export default function AuthPage() {
-    const signup = useLocation().pathname === "/signup";
+    const location = useLocation();
+    const signup = location.pathname === "/signup";
     const [params] = useSearchParams();
-    const next = safeNext(params.get("next"));
+    const nextPath = safeNext(params.get("next")).split("#")[0];
+    const next = authReturnPath(nextPath, location.hash);
     const navigate = useNavigate();
     const { t } = useTranslation();
     const session = authClient.useSession();
@@ -43,7 +45,8 @@ export default function AuthPage() {
         setBusy(true);
         setError("");
         try {
-            const result = await authClient.signIn.social({ provider: "google", callbackURL: new URL(next, window.location.origin).href });
+            if (location.hash) sessionStorage.setItem(AUTH_FRAGMENT_KEY, location.hash);
+            const result = await authClient.signIn.social({ provider: "google", callbackURL: new URL(nextPath, window.location.origin).href });
             if (result.error) setError(result.error.message || t("saas.authError"));
         } catch {
             setError(t("saas.authError"));
@@ -105,7 +108,7 @@ export default function AuthPage() {
                 </form>
                 <p className="mt-8 text-center text-sm text-white/50">
                     {t(signup ? "saas.haveAccount" : "saas.needAccount")}{" "}
-                    <Link className="!text-[#dbfc7b]" to={`${signup ? "/login" : "/signup"}?next=${encodeURIComponent(next)}`}>
+                    <Link className="!text-[#dbfc7b]" to={`${signup ? "/login" : "/signup"}?next=${encodeURIComponent(nextPath)}${location.hash}`}>
                         {t(signup ? "saas.login" : "saas.signup")}
                     </Link>
                 </p>
