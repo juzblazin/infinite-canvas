@@ -56,7 +56,7 @@ export default function AuthPage() {
     }
 
     return (
-        <main className="min-h-dvh bg-[#101110] px-6 py-10 text-[#f3f2ec]">
+        <main className="h-dvh overflow-y-auto bg-[#101110] px-6 py-10 text-[#f3f2ec]">
             <Link to="/" className="inline-flex items-center gap-2 text-sm !text-white/60 hover:!text-white">
                 <ArrowLeft size={16} />
                 {t("saas.back")}

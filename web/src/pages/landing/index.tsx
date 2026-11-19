@@ -31,7 +31,7 @@ export default function LandingPage() {
     );
 
     return (
-        <div className="landing">
+        <div className="landing h-dvh overflow-x-hidden overflow-y-auto">
             <header className="landing-nav">
                 <Link to="/" className="flex items-center gap-2.5 text-lg font-medium tracking-tight">
                     <img src="/logo.svg" alt="" className="size-7 invert" />
