@@ -823,7 +823,7 @@ export function LocalAgentPanel({ embedded, headless, autoConnect }: { embedded?
             let result: unknown;
             let appliedOps = input.ops || [];
             if (payload.name === "site_navigate") {
-                const path = input.path || "/";
+                const path = input.path && input.path !== "/" ? input.path : "/app";
                 navigate(path);
                 result = { ok: true, path };
             } else if (payload.name === "canvas_apply_ops") {

@@ -1,4 +1,7 @@
+import { saasEn } from "./saas";
+
 export default {
+    saas: saasEn,
     meta: {
         title: "Infinite Canvas",
         description: "An infinite canvas creation tool",

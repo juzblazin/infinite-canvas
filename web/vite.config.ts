@@ -39,6 +39,7 @@ function localPluginsManifest(): Plugin {
 }
 
 export default defineConfig({
+    server: { proxy: { "/api": "http://localhost:8787" } },
     base: process.env.VITE_BASE || "/",
     plugins: [react(), localPluginsManifest()],
     resolve: {

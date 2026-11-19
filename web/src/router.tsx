@@ -11,24 +11,35 @@ import ImagePage from "@/pages/image";
 import NotFound from "@/pages/not-found";
 import PromptsPage from "@/pages/prompts";
 import VideoPage from "@/pages/video";
+import LandingPage from "@/pages/landing";
+import AuthPage from "@/pages/auth";
+import { AuthGuard } from "@/pages/auth/guard";
 
 export const router = createBrowserRouter([
+    { path: "/", element: <LandingPage /> },
+    { path: "/login", element: <AuthPage /> },
+    { path: "/signup", element: <AuthPage /> },
     {
-        element: (
-            <UserLayout>
-                <AnalyticsTracker />
-                <Outlet />
-            </UserLayout>
-        ),
+        element: <AuthGuard />,
         children: [
-            { path: "/", element: <HomePage /> },
-            { path: "/image", element: <ImagePage /> },
-            { path: "/video", element: <VideoPage /> },
-            { path: "/assets", element: <AssetsPage /> },
-            { path: "/prompts", element: <PromptsPage /> },
-            { path: "/canvas", element: <CanvasPage /> },
-            { path: "/canvas/:id", element: <CanvasProjectPage /> },
-            { path: "/config", element: <ConfigPage /> },
+            {
+                element: (
+                    <UserLayout>
+                        <AnalyticsTracker />
+                        <Outlet />
+                    </UserLayout>
+                ),
+                children: [
+                    { path: "/app", element: <HomePage /> },
+                    { path: "/image", element: <ImagePage /> },
+                    { path: "/video", element: <VideoPage /> },
+                    { path: "/assets", element: <AssetsPage /> },
+                    { path: "/prompts", element: <PromptsPage /> },
+                    { path: "/canvas", element: <CanvasPage /> },
+                    { path: "/canvas/:id", element: <CanvasProjectPage /> },
+                    { path: "/config", element: <ConfigPage /> },
+                ],
+            },
         ],
     },
     { path: "*", element: <NotFound /> },

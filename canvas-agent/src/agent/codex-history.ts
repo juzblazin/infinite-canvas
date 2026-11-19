@@ -684,7 +684,7 @@ function changeKind(value: unknown) {
 
 /** 将站点路由转换为中文页面名称。 */
 function routeName(path: string) {
-    if (path === "/") return "首页";
+    if (path === "/" || path === "/app") return "首页";
     if (path === "/canvas") return "画布页面";
     if (path.startsWith("/canvas/")) return "指定画布";
     if (path.startsWith("/image")) return "生图工作台";
