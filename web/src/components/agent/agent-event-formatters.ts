@@ -410,7 +410,7 @@ export function toolAction(name: string) {
 }
 
 export function routeName(path: string) {
-    if (path === "/") return tr("routes.home");
+    if (path === "/" || path === "/app") return tr("routes.home");
     if (path === "/canvas") return tr("routes.canvas");
     if (path.startsWith("/canvas/")) return tr("routes.canvasProject");
     if (path.startsWith("/image")) return tr("routes.image");
