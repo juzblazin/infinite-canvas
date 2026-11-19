@@ -25,18 +25,23 @@ function createAuth(env: Bindings, pool: Pool) {
             user: {
                 create: {
                     after: async (user) => {
-                        const client = await pool.connect();
                         try {
-                            await client.query("BEGIN");
-                            const workspaceId = crypto.randomUUID();
-                            await client.query('INSERT INTO workspaces (id, name, owner_id) VALUES ($1, $2, $3)', [workspaceId, `${user.name}'s workspace`, user.id]);
-                            await client.query('INSERT INTO workspace_members (workspace_id, user_id, role) VALUES ($1, $2, $3)', [workspaceId, user.id, "owner"]);
-                            await client.query("COMMIT");
+                            const client = await pool.connect();
+                            try {
+                                await client.query("BEGIN");
+                                const workspaceId = crypto.randomUUID();
+                                await client.query('INSERT INTO workspaces (id, name, owner_id) VALUES ($1, $2, $3)', [workspaceId, `${user.name}'s workspace`, user.id]);
+                                await client.query('INSERT INTO workspace_members (workspace_id, user_id, role) VALUES ($1, $2, $3)', [workspaceId, user.id, "owner"]);
+                                await client.query("COMMIT");
+                            } catch (error) {
+                                await client.query("ROLLBACK");
+                                throw error;
+                            } finally {
+                                client.release();
+                            }
                         } catch (error) {
-                            await client.query("ROLLBACK");
+                            await pool.query('DELETE FROM "user" WHERE id = $1', [user.id]);
                             throw error;
-                        } finally {
-                            client.release();
                         }
                     },
                 },
